@@ -16,6 +16,9 @@ class LabelledObject(object):
     
     def __hash__(self):
         return self.label
+
+    def __repr__(self):
+        return "<LabelledObject Instance Label:%i>"%self.label
     
     @property
     def frames(self):
@@ -38,7 +41,7 @@ class LabelledObjectCollection(list):
     This holds many labelled objects.
     """
     def __contains__(self, item):
-        return bool(len([a.label for a in self].index(item)))
+        return item in [a.label for a in self]
 
     def append(self, item):
         if not isinstance(item, LabelledObject):
@@ -57,7 +60,7 @@ class LabelledObjectCollection(list):
             super(LabelledObjectCollection, self).__setitem__(key, value)
 
     def __getitem__(self, key):
-        return self[[a.label for a in self].index(key)]
+        return super(LabelledObjectCollection, self).__getitem__([a.label for a in self].index(key))
     
     def add_frame(self, frameind, regionprops):
         """
@@ -77,5 +80,5 @@ class LabelledObjectCollection(list):
         for rprop in regionprops:
             if not rprop.label in self:
                 self.append(LabelledObject(rprop.label))
-            
+
             self[rprop.label].add_frame(frameind, rprop)

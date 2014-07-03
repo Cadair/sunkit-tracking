@@ -56,9 +56,8 @@ class LabelledObjectTracker(object):
         """
 
         obj_collection = LabelledObjectCollection()
-        for k, (im, label_im) in enumerate(zip(self.image_series,
-                                               self.labelled_series)):
-
+        for k, (im, label_im) in enumerate(zip(self.image_series[:-1],
+                                               self.labelled_series[:-1])):
             self.pre_tracking(k, k+1)
 
             self.compare_images(k, k+1)
@@ -67,6 +66,11 @@ class LabelledObjectTracker(object):
             obj_collection.add_frame(k, all_rprops)
 
             self.post_tracking(k, k+1)
+        
+        # Add the last frame
+        all_rprops = skimage.measure.regionprops(self.labelled_series[-1],
+                                                 self.image_series[-1])
+        obj_collection.add_frame(k, all_rprops)
         
         return obj_collection
 
@@ -81,4 +85,4 @@ class OverlapObjectTracker(LabelledObjectTracker):
         self.labelled_series[i1], self.labelled_series[i2] = \
                         skimage.measure.label_match(self.labelled_series[i1],
                                                     self.labelled_series[i2],
-                                                    remove_duplicates=True)
+                                                    remove_duplicates=True, background=0)
