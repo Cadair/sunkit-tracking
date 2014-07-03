@@ -19,6 +19,14 @@ class LabelledObject(object):
 
     def __repr__(self):
         return "<LabelledObject Instance Label:%i>"%self.label
+
+    def __cmp__(self,other):
+        if self.label < other:
+            return -1
+        elif self.label > other:
+            return 1
+        else:
+            return 0
     
     @property
     def frames(self):
